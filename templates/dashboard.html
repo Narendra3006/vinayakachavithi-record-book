@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Records Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .sno-col {
+            width: 50px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="p-4">
+   
+<div class="d-flex align-items-center mb-4">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" width="60" height="60" class="me-3">
+    <h1 class="mb-0">Gedela Vedhi Vinayaka Chavithi Record Book</h1>
+</div>
+
+
+    {% if session.admin %}
+        <a href="/logout" class="btn btn-danger mb-3">Logout Admin</a>
+    {% else %}
+        <a href="/login" class="btn btn-warning mb-3">Admin Login</a>
+    {% endif %}
+
+    <h3>💰 Donations (విరాళాలు)</h3>
+    <table class="table table-bordered">
+        <colgroup>
+            <col class="sno-col">
+        </colgroup>
+        <tr>
+            <th>S.No</th>
+            <th>Name</th>
+            <th>Amount</th>
+            {% if session.admin %}<th>Actions</th>{% endif %}
+        </tr>
+        {% for c in credit_data %}
+        <tr>
+            <td class="text-center">{{ loop.index }}</td>
+            <td>{{ c[1] }}</td>
+            <td>{{ c[2] }}</td>
+            {% if session.admin %}
+            <td>
+                <a href="/edit_credit/{{ c[0] }}" class="btn btn-sm btn-secondary">Edit</a>
+                <a href="/delete_credit/{{ c[0] }}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if session.admin %}
+    <form method="POST" action="/add_credit" class="mb-4">
+        <h5>Add Donation</h5>
+        <input name="name" placeholder="Name" required class="form-control mb-2">
+        <input name="amount" placeholder="Amount" type="number" required class="form-control mb-2">
+        <button class="btn btn-primary">Add Donation</button>
+    </form>
+    {% endif %}
+
+    <h3>Expenses (ఖర్చులు)</h3>
+    <table class="table table-bordered">
+        <colgroup>
+            <col class="sno-col">
+        </colgroup>
+        <tr>
+            <th>S.No</th>
+            <th>Item</th>
+            <th>Amount</th>
+            {% if session.admin %}<th>Actions</th>{% endif %}
+        </tr>
+        {% for d in debit_data %}
+        <tr>
+            <td class="text-center">{{ loop.index }}</td>
+            <td>{{ d[1] }}</td>
+            <td>{{ d[2] }}</td>
+            {% if session.admin %}
+            <td>
+                <a href="/edit_debit/{{ d[0] }}" class="btn btn-sm btn-secondary">Edit</a>
+                <a href="/delete_debit/{{ d[0] }}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if session.admin %}
+    <form method="POST" action="/add_debit" class="mb-4">
+        <h5>Add Expenses</h5>
+        <input name="item" placeholder="Item Name" required class="form-control mb-2">
+        <input name="amount" placeholder="Amount" type="number" required class="form-control mb-2">
+        <button class="btn btn-primary">Add Expenses</button>
+    </form>
+    {% endif %}
+
+    <h4 class="mt-4">Total Credit: ₹{{ total_credit }}</h4>
+    <h4>Expenses: ₹{{ total_debit }}</h4>
+    <h3 class="text-success">Remaining Balance: ₹{{ balance }}</h3>
+</body>
+</html>
